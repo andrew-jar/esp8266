@@ -59,23 +59,31 @@ void setup()
   tft.setRotation(0);
   // fill the screen with black color
   tft.fillScreen(ILI9341_BLACK);
-  
-  tft.fillRect(0, 38, tft.width(), 1, ILI9341_BLUE);
-  tft.fillRect(0, 138, tft.width(), 2, ILI9341_BLUE);
-  tft.fillRect(0, 318, tft.width(), 2, ILI9341_BLUE);
-  //tft.fillRect(0, 170, tft.width(), 2, ILI9341_BLUE);
-  //tft.drawRect(1,1,238,318,ILI9341_BLUE);
-  //tft.fillRect(0,1, 240, 138, ILI9341_BLUE);
- 
-  
-   //tft.fillRect(0, 150, tft.width(), 1, ILI9341_WHITE);
+
+  tft.drawLine(10, 38, 230, 38, ILI9341_BLUE);
+  tft.drawRoundRect(1, 1, 239, 319, 8, ILI9341_BLUE);
+  //tft.drawRoundRect(1, 1, 239, 134, 8, ILI9341_BLUE);
+  //tft.drawRoundRect(1, 140, 239, 298, 8, ILI9341_BLUE);
+  tft.drawRoundRect(6, 144, 228, 171, 8, ILI9341_BLUE); //x y w h
+  //tft.fillRect(1, 38, tft.width(), 1, ILI9341_BLUE);
+ // tft.fillRect(1, 138, tft.width(), 1, ILI9341_BLUE);
+  //tft.fillRect(1, 318, tft.width(), 1, ILI9341_BLUE);
+  //tft.fillRect(1, 1, tft.width(), 1, ILI9341_BLUE);
+  //tft.drawRect(1, 1, 238, 318, ILI9341_BLUE);
+
+  //tft.fillRect(0, 1, 240, 138, ILI9341_BLUE);
+  //tft.fillRect(0, 1, tft.width(), 1, ILI9341_WHITE);
+
+  tft.drawBitmap(22,190,temperature,20,20,ILI9341_CYAN); 
+  tft.drawBitmap(22,234,humidity,20,20,ILI9341_CYAN);
+  tft.drawBitmap(22,279,epd_bitmap_icon_pressure,20,20,ILI9341_CYAN); 
   
   tft.setTextWrap(false);                        // turn off text wrap option
   tft.setTextColor(ILI9341_GREEN, ILI9341_BLACK);
   tft.setCursor(36, 151, 4);
   tft.print("Pomiar Meteo:");
   // print degree symbol °C
-  tft.drawCircle(186, 196, 4, ILI9341_WHITE);//176
+  tft.drawCircle(186, 196, 4, ILI9341_WHITE);
   tft.drawCircle(186, 196, 5, ILI9341_WHITE);
   tft.setCursor(196, 190, 4); //186
   tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK);  
@@ -101,19 +109,17 @@ void setup()
   else 
   {  // connection error or device address wrong!                                          
     tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK);   // set text color to white and black background
-    tft.setCursor(10, 210);    // move cursor to position (3, 88) pixel
-    tft.print("Connection");
-    tft.setCursor(50, 254);  // move cursor to position (63, 126) pixel
-    tft.print("Error");
+    tft.setCursor(40, 210);    // move cursor to position (3, 88) pixel
+    tft.print("Blad");
+    tft.setCursor(40, 254);  // move cursor to position (63, 126) pixel
+    tft.print("Polaczenia");
 
 
     // ----- Uzyskaj dane z czujnika BME280 i wyświetl zmierzone wartości na TFT -----
   temp = bme280.readTemperature();  // get temperature in °C
   humi = bme280.readHumidity();     // get humidity in %
   pres = bme280.readPressure() / pow(2.718281828, -(elevation / ((273.15 + bme280.readTemperature()) * 29.263))) / 100.0F; // get pressure in Pa
-  tft.drawBitmap(18,190,temperature,20,20,ILI9341_CYAN); 
-  tft.drawBitmap(18,234,humidity,20,20,ILI9341_CYAN);
-  tft.drawBitmap(18,279,epd_bitmap_icon_pressure,20,20,ILI9341_CYAN); 
+  
   }
 } 
 
@@ -160,6 +166,7 @@ void loop()
   tft.setCursor(95, 190, 4);//43,190
   tft.print(temp, 1);
   
+  
   // 2: print humidity
    tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK);
    tft.setCursor(95, 234, 4);
@@ -194,14 +201,16 @@ void RTC_display()
   byte x_pos[7] = {65, 55, 80, 85, 70, 80, 80};
   static byte previous_dow = 8;
 
-  // print day of the week
+  // wydrukuj dzień tygodnia
   if( previous_dow != now.dayOfTheWeek() )
   {
     previous_dow = now.dayOfTheWeek();
-    tft.fillRect(5, 0, 230, 35, ILI9341_BLACK);     // draw rectangle (erase day from the display)28; 14, 0, 216, 28
+    tft.fillRect(10, 8, 220, 30, ILI9341_BLACK);     // draw rectangle (erase day from the display)5, 3, 230, 35,
     tft.setCursor(x_pos[previous_dow], 10, 4);
     tft.setTextColor(ILI9341_GREEN, ILI9341_BLACK);     // set text color to cyan and black background
     tft.print( dow_matrix[now.dayOfTheWeek()] );
+
+
   }
  
   // print date
@@ -213,20 +222,27 @@ void RTC_display()
   tft.setTextColor(ILI9341_YELLOW, ILI9341_BLACK); 
   tft.printf("%02u:%02u:%02u", now.hour()%100, now.minute()%100, now.second()%100);
 }
-
 byte edit(byte parameter)
 {
   static byte i = 0, y_pos,
-              x_pos[5] = {48, 95, 168, 35, 102}; //193-153
+              x_pos[5] = {48, 95, 168, 27, 96}; //35, 102
+              byte font_number; 
+              byte  x_fill_rect; 
+              byte  y_fill_rect; 
 
- 
   if(i < 3) {
     tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK); 
+    font_number = 4;
+    x_fill_rect = 28; 
+    y_fill_rect = 28; 
     y_pos = 50;
   }
   else {
     tft.setTextColor(ILI9341_WHITE, ILI9341_BLACK);
-    y_pos = 93; //88 93
+    font_number = 6;
+    x_fill_rect = 55;  // to trzeba zwiększyć
+    y_fill_rect = 51; // to trzeba zwiększyć
+    y_pos = 87; //93
    }
  
   while( debounce() );  // call debounce function (wait for B1 to be released)
@@ -245,15 +261,15 @@ byte edit(byte parameter)
       if(i == 4 && parameter > 59)    // if minutes > 59 ==> minutes = 0
         parameter = 0;
  
-      tft.setCursor(x_pos[i], y_pos);
+      tft.setCursor(x_pos[i], y_pos,font_number);
       tft.printf("%02u", parameter);
       delay(200);       // wait 200 ms
     }
  
-    tft.fillRect(x_pos[i], y_pos, 28, 28, ILI9341_BLACK);//44, 28
+    tft.fillRect(x_pos[i], y_pos, x_fill_rect ,  y_fill_rect , ILI9341_BLACK);//28, 28
     unsigned long previous_m = millis();
     while( (millis() - previous_m < 250) && digitalRead(button1) && digitalRead(button2)) ;
-    tft.setCursor(x_pos[i], y_pos, 4); //,4
+    tft.setCursor(x_pos[i], y_pos, font_number); //,4
     
     
      
