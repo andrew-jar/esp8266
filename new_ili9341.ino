@@ -61,10 +61,10 @@ void setup()
   tft.fillScreen(ILI9341_BLACK);
 
   tft.drawLine(10, 38, 230, 38, ILI9341_BLUE);
-  tft.drawRoundRect(1, 1, 239, 319, 8, ILI9341_BLUE);
+  tft.drawRoundRect(1, 1, 239, 317, 8, ILI9341_BLUE);//319
   //tft.drawRoundRect(1, 1, 239, 134, 8, ILI9341_BLUE);
   //tft.drawRoundRect(1, 140, 239, 298, 8, ILI9341_BLUE);
-  tft.drawRoundRect(6, 144, 228, 171, 8, ILI9341_BLUE); //x y w h
+  tft.drawRoundRect(6, 142, 228, 169, 8, ILI9341_BLUE); //x y w h //171
   //tft.fillRect(1, 38, tft.width(), 1, ILI9341_BLUE);
  // tft.fillRect(1, 138, tft.width(), 1, ILI9341_BLUE);
   //tft.fillRect(1, 318, tft.width(), 1, ILI9341_BLUE);
@@ -195,25 +195,31 @@ void loop()
 //////////////////////////////////////// RTC functions ////////////////////////////////////////
 void RTC_display()
 {
-   
-   
-   char dow_matrix[7][20] = {"Niedziela", "Poniedzialek", "Wtorek", "Sroda", "Czwartek", "Piatek", "Sobota"};
-  byte x_pos[7] = {65, 55, 80, 85, 70, 80, 80};
+  
+char dow_matrix[7][20] = {"Niedziela", "Poniedzialek", "Wtorek", "Sroda", "Czwartek", "Piatek", "Sobota"};
+byte x_pos[7] = {65, 55, 80, 85, 70, 80, 80};
   static byte previous_dow = 8;
 
-  // wydrukuj dzień tygodnia
-  if( previous_dow != now.dayOfTheWeek() )
-  {
+// print day of the week
+if( previous_dow != now.dayOfTheWeek() )
+{
     previous_dow = now.dayOfTheWeek();
-    tft.fillRect(10, 8, 220, 30, ILI9341_BLACK);     // draw rectangle (erase day from the display)5, 3, 230, 35,
+    tft.fillRect(10, 8, 220, 30, ILI9341_BLACK); // draw rectangle (erase day from the display)
     tft.setCursor(x_pos[previous_dow], 10, 4);
-    tft.setTextColor(ILI9341_GREEN, ILI9341_BLACK);     // set text color to cyan and black background
-    tft.print( dow_matrix[now.dayOfTheWeek()] );
 
+    // Set text color based on the day of the week
+    if (previous_dow == 0) { // Sunday
+        tft.setTextColor(ILI9341_RED, ILI9341_BLACK); // Red text for Sunday
+    } else if (previous_dow == 6) { // Saturday
+        tft.setTextColor(ILI9341_CYAN, ILI9341_BLACK); // Cyan text for Saturday
+    } else {
+        tft.setTextColor(ILI9341_GREEN, ILI9341_BLACK); // Green text for other days
+    }
+    
+    tft.print(dow_matrix[now.dayOfTheWeek()]);
+}
 
-  }
- 
-  // print date
+// print date
   tft.setCursor(48, 50, 4); //
   tft.setTextColor(ILI9341_YELLOW, ILI9341_BLACK);  
   tft.printf("%02u / %02u / %04u", now.day()%100, now.month()%100, now.year());
